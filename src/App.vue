@@ -22,7 +22,7 @@ import BtnForm from './components/BtnForm.vue'
     </div>
     <div id="hero" class="flex">
       <div id="intorduce" class="pl-[2%] w-1/2 text-primary-200 gap-2 flex flex-col">
-        <h1 class="text-lg">ยินดีต้อนรับสู่ การสมัครสมาชิก Giffarine</h1>
+        <h1 class="text-lg">ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครตัวแทน Giffarine</h1>
         <div class="flex font-light flex-col gap-3">
           <p>สิทธิพิเศษ</p>
           <div class="flex flex-col w-full gap-2 text-white">
@@ -55,7 +55,7 @@ import BtnForm from './components/BtnForm.vue'
         <InputForm title="ชื่อ-นามสกุล" placeholder="สมศรี แสนสุขดี" />
 
         <div id="date-phone" class="flex gap-2 w-full text-primary-100">
-          <InputForm class="flex-1" title="วันเกิด" type="date" placeholder="111184xxxxxxx" />
+          <InputForm class="flex-1" title="วันเกิด" type="date" />
           <InputForm class="flex-1" title="เบอร์โทร" placeholder="082xxxxxxx" max-length="10" />
         </div>
         <InputForm title="เลขบัตรประชาชน" placeholder="111184xxxxxxx" max-length="13" />
