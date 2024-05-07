@@ -17,6 +17,7 @@ defineProps({
       :type="type"
       @input="$emit('update:modelValue', $event.target.value)"
       class="input input-sm bg-white input-bordered w-full"
+      :value="modelValue"
     />
     <div>
       <span v-for="error in errors" :key="error.$uid" class="text-red-500 ml-1 text-[13px]"

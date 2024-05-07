@@ -6,22 +6,18 @@ import BoxText from './../components/BoxText.vue'
 import InputText from './../components/InputText.vue'
 import InputFile from './../components/InputFile.vue'
 import BtnForm from './../components/BtnForm.vue'
+import exIdCard from '/images/ex-id-card.jpg'
+
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, helpers, numeric } from '@vuelidate/validators'
-import { computed, reactive } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
-const registerForm = reactive({
-  prefix: '',
-  name: '',
-  birthDate: '',
-  phone: '',
-  id: '',
-  address: '',
-  zipCode: ''
-  // file: ''
-})
 
+const router = useRouter()
+const checkTypeFile = (value) => {
+  const type = value.type
+  return type.includes('jpg') || type.includes('png') || type.includes('jpeg')
+}
 const rules = computed(() => {
   return {
     prefix: { required: helpers.withMessage('โปรดระบุ', required) },
@@ -42,16 +38,48 @@ const rules = computed(() => {
       required: helpers.withMessage('กรุณากรอกรหัสไปรษณีย์', required),
       numeric: helpers.withMessage('กรุณากรอกเป็นตัวเลขเท่านั้น', numeric),
       minLength: helpers.withMessage('กรุณากรอกรหัสไปรษณีย์ 5 ตัว', minLength(5))
+    },
+    idCard: {
+      checkTypeFile: helpers.withMessage('กรุณาใส่รูปภาพ สกุล (*.jpg,*.png,.*.jpeg)', checkTypeFile)
     }
   }
 })
+const registerForm = ref({
+  prefix: '',
+  name: '',
+  birthDate: '',
+  phone: '',
+  id: '',
+  address: '',
+  zipCode: '',
+  idCard: null
+})
+let $v = useVuelidate(rules, registerForm.value)
+onMounted(() => {
+  const data = localStorage.getItem('dataForm')
+  if (data) {
+    registerForm.value = JSON.parse(data)
+    $v = useVuelidate(rules, registerForm.value)
+  }
+})
+
+// onMounted(async () => {
+//   const test = await previewBinaryFile(registerForm.value.idCard)
+//   console.log(test)
+// })
+watch(
+  () => registerForm.value,
+  async () => {
+    console.log(registerForm.value.idCard)
+    localStorage.setItem('dataForm', JSON.stringify(registerForm.value))
+  },
+  { deep: true }
+)
 
 const submitForm = async () => {
   const result = await $v.value.$validate()
-  if (result) router.push({ name: 'payment' })
+  result && router.push({ name: 'validate' })
 }
-
-const $v = useVuelidate(rules, registerForm)
 </script>
 
 <template>
@@ -101,6 +129,7 @@ const $v = useVuelidate(rules, registerForm)
           <select
             v-model="registerForm.prefix"
             class="select bg-white border-[1px] border-gray-200 select-sm"
+            :value="registerForm.prefix"
           >
             <option value="" disabled selected>ระบุ</option>
             <option value="นาย">นาย</option>
@@ -178,7 +207,14 @@ const $v = useVuelidate(rules, registerForm)
         max-length="5"
         :errors="$v.zipCode.$errors"
       />
-      <InputFile title="อัพโหลดรูปภาพบัตรประชาชน" />
+      <InputFile
+        title="อัพโหลดรูปภาพบัตรประชาชน"
+        v-model="registerForm.idCard"
+        :errors="$v.idCard.$errors"
+      />
+      <div class="h-[350px] flex justify-center items-center">
+        <img class="h-[90%]" :src="registerForm.idCard?.preview || exIdCard" alt="test" />
+      </div>
       <BtnForm @click="submitForm" text="สมัครสมาชิก" />
     </div>
   </div>

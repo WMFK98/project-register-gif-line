@@ -1,5 +1,6 @@
 import PaymentPage from '@/views/PaymentPage.vue'
 import RegisterPage from '@/views/RegisterPage.vue'
+import ValidatePage from '@/views/ValidatePage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -9,6 +10,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterPage
+    },
+    {
+      path: '/validate',
+      name: 'validate',
+      component: ValidatePage
     },
     {
       path: '/payment',
