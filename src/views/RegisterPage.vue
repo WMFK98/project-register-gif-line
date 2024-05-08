@@ -63,16 +63,9 @@ onMounted(() => {
   }
 })
 
-// onMounted(async () => {
-//   const test = await previewBinaryFile(registerForm.value.idCard)
-//   console.log(test)
-// })
 watch(
   () => registerForm.value,
-  async () => {
-    console.log(registerForm.value.idCard)
-    localStorage.setItem('dataForm', JSON.stringify(registerForm.value))
-  },
+  async () => localStorage.setItem('dataForm', JSON.stringify(registerForm.value)),
   { deep: true }
 )
 

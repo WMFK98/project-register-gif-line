@@ -52,11 +52,7 @@ const submitForm = async () => {
           วันเกิด ${dataForm.value.birthDate} เบอโทร ${dataForm.value.phone}
           ที่อยู่ ${dataForm.value.address} รหัสไปรษณีย์ ${dataForm.value.zipCode}`
         }
-        // {
-        //   type: 'image',
-        //   originalContentUrl: 'https://example.com/original.jpg',
-        //   previewImageUrl: 'https://example.com/preview.jpg'
-        // }
+
       ]
     }
 
@@ -68,7 +64,6 @@ const submitForm = async () => {
     }
 
     const response = await axios.post(`${url}/broadcast`, data, config)
-    console.log(response)
     if (response.status === 200) {
       localStorage.clear()
       router.push({ name: 'register' })
@@ -81,7 +76,6 @@ const $v = useVuelidate(rules, payment.value)
 
 <template>
   <div class="flex flex-col p-5 items-center text-primary-100">
-    {{ dataForm }}
     <div class="flex flex-col items-center gap-2">
       <h1 class="text-lg">ยืนยันการชำระเงิน</h1>
       <QRCode class="h-[250px]" />
