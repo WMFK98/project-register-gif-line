@@ -3,10 +3,30 @@ import InputFile from './../components/InputFile.vue'
 import BtnForm from './../components/BtnForm.vue'
 import QRCode from './../components/images/QRCode.vue'
 import exPayment from '/images/ex-payment.jpeg'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+const url = import.meta.env.VITE_URL_API
+const channelId = import.meta.env.BASE_CHANNEL_ID
+const channelKey = import.meta.env.BASE_CHANNEL_SECRECT
+
+const dataForm = ref()
+const checkData = () =>
+  dataForm.value?.prefix &&
+  dataForm.value?.name &&
+  dataForm.value?.phone &&
+  dataForm.value?.birthDate &&
+  dataForm.value?.address &&
+  dataForm.value?.zipCode &&
+  dataForm.value?.idCard
+
+onMounted(async () => {
+  dataForm.value = JSON.parse(localStorage.getItem('dataForm'))
+  if (!checkData()) router.push({ name: 'register' })
+})
+
 const payment = ref({ img: null })
 const router = useRouter()
 const checkTypeFile = (value) => {
@@ -23,9 +43,36 @@ const rules = computed(() => {
 
 const submitForm = async () => {
   const result = await $v.value.$validate()
-  if (result) {
-    localStorage.clear()
-    router.push({ name: 'register' })
+  if (result && checkData()) {
+    const data = {
+      messages: [
+        {
+          type: 'text',
+          text: `ชื่อ ${dataForm.value.prefix} ${dataForm.value.name} 
+          วันเกิด ${dataForm.value.birthDate} เบอโทร ${dataForm.value.phone}
+          ที่อยู่ ${dataForm.value.address} รหัสไปรษณีย์ ${dataForm.value.zipCode}`
+        }
+        // {
+        //   type: 'image',
+        //   originalContentUrl: 'https://example.com/original.jpg',
+        //   previewImageUrl: 'https://example.com/preview.jpg'
+        // }
+      ]
+    }
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${channelKey}}`
+      }
+    }
+
+    const response = await axios.post(`${url}/broadcast`, data, config)
+    console.log(response)
+    if (response.status === 200) {
+      localStorage.clear()
+      router.push({ name: 'register' })
+    }
   }
 }
 
@@ -34,6 +81,7 @@ const $v = useVuelidate(rules, payment.value)
 
 <template>
   <div class="flex flex-col p-5 items-center text-primary-100">
+    {{ dataForm }}
     <div class="flex flex-col items-center gap-2">
       <h1 class="text-lg">ยืนยันการชำระเงิน</h1>
       <QRCode class="h-[250px]" />
