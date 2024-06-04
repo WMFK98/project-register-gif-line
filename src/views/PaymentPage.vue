@@ -9,8 +9,6 @@ import { helpers } from '@vuelidate/validators'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 const url = import.meta.env.VITE_URL_API
-const channelId = import.meta.env.BASE_CHANNEL_ID
-const channelKey = import.meta.env.BASE_CHANNEL_SECRECT
 
 const dataForm = ref()
 const checkData = () =>
@@ -44,26 +42,17 @@ const rules = computed(() => {
 const submitForm = async () => {
   const result = await $v.value.$validate()
   if (result && checkData()) {
+    const { name, prefix, birthDate, phone, address, zipCode, idCard } = dataForm.value
     const data = {
-      messages: [
-        {
-          type: 'text',
-          text: `ชื่อ ${dataForm.value.prefix} ${dataForm.value.name} 
-          วันเกิด ${dataForm.value.birthDate} เบอโทร ${dataForm.value.phone}
-          ที่อยู่ ${dataForm.value.address} รหัสไปรษณีย์ ${dataForm.value.zipCode}`
-        }
-
-      ]
+      name,
+      prefix,
+      birthDate,
+      phone,
+      address,
+      zipCode,
+      idCard
     }
-
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${channelKey}}`
-      }
-    }
-
-    const response = await axios.post(`${url}/broadcast`, data, config)
+    const response = await axios.post(`${url}/broadcast`, data)
     if (response.status === 200) {
       localStorage.clear()
       router.push({ name: 'register' })

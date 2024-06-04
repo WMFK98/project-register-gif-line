@@ -205,6 +205,8 @@ const submitForm = async () => {
         v-model="registerForm.idCard"
         :errors="$v.idCard.$errors"
       />
+      {{ registerForm.idCard }}
+      {{ registerForm.idCard?.preview }}
       <div class="h-[350px] flex justify-center items-center">
         <img class="h-[90%]" :src="registerForm.idCard?.preview || exIdCard" alt="test" />
       </div>
