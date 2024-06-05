@@ -1,6 +1,31 @@
 services:
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      network_server:
+        ipv4_address: 172.0.20.2
+    restart: unless-stopped
+
   frontend:
     build:
-      context: ./project-register-gif-line
+      context: ./frontend
     ports: 
-      - "443:443"
+      - "3000:80"
+    networks:
+      network_client:
+        ipv4_address: 172.0.22.2
+    restart: unless-stopped
+
+networks:
+  network_server:
+    ipam:
+      config:
+        - subnet: "172.0.20.0/24"
+  network_client:
+    ipam:
+      config:
+        - subnet: "172.0.22.0/24"
