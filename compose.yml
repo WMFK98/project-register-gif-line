@@ -1,0 +1,6 @@
+services:
+  frontend:
+    build:
+      context: ./project-register-gif-line
+    ports: 
+      - "443:443"
