@@ -20,7 +20,12 @@ public class LineController {
         return ResponseEntity.ok(service.sendBroadcast(dataForm));
     }
 
-    @GetMapping("/{filename:.+}")
+    @GetMapping("/test")
+    public ResponseEntity<Object> test(){
+        return ResponseEntity.ok("I'm here");
+    }
+
+    @GetMapping("/image/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename){
         Resource file = service.loadFileAsResource(filename);
