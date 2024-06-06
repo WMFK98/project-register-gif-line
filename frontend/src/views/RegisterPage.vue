@@ -57,6 +57,7 @@ const registerForm = ref({
 let $v = useVuelidate(rules, registerForm.value)
 onMounted(async () => {
   const data = localStorage.getItem('dataForm')
+
   if (data) {
     registerForm.value = JSON.parse(data)
     $v = useVuelidate(rules, registerForm.value)

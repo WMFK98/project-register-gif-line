@@ -8,20 +8,15 @@ const router = useRouter()
 onMounted(async () => {
   dataForm.value = JSON.parse(localStorage.getItem('dataForm'))
   const haveImge = await checkBlobURL(dataForm.value.idCard.preview)
-
-  if (
-    !haveImge ||
-    !(
-      dataForm.value?.prefix &&
-      dataForm.value?.name &&
-      dataForm.value?.phone &&
-      dataForm.value?.birthDate &&
-      dataForm.value?.address &&
-      dataForm.value?.zipCode &&
-      dataForm.value?.idCard
-    )
-  )
-    router.push({ name: 'register' })
+  const checkData = () =>
+    dataForm.value?.prefix &&
+    dataForm.value?.name &&
+    dataForm.value?.phone &&
+    dataForm.value?.birthDate &&
+    dataForm.value?.address &&
+    dataForm.value?.zipCode &&
+    dataForm.value?.idCard
+  if (!haveImge || !checkData()) router.push({ name: 'register' })
 })
 </script>
 

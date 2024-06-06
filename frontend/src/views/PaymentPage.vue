@@ -7,6 +7,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { useRouter } from 'vue-router'
+import { checkBlobURL } from './../libs/previewBinary'
 import axios from 'axios'
 const url = import.meta.env.VITE_URL_API
 
@@ -22,7 +23,9 @@ const checkData = () =>
 
 onMounted(async () => {
   dataForm.value = JSON.parse(localStorage.getItem('dataForm'))
-  if (!checkData()) router.push({ name: 'register' })
+  const haveImge = await checkBlobURL(dataForm.value.idCard.preview)
+
+  if (!haveImge || !checkData()) router.push({ name: 'register' })
 })
 
 const payment = ref({ img: null })
