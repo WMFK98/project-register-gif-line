@@ -1,5 +1,4 @@
 services:
-
   backend:
     build:
       context: ./backend
@@ -13,11 +12,26 @@ services:
   frontend:
     build:
       context: ./frontend
-    ports: 
+    ports:
       - "3000:80"
     networks:
       network_client:
         ipv4_address: 172.0.22.2
+    restart: unless-stopped
+
+  reverse_proxy:
+    build:
+      dockerfile: proxy.Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      network_client:
+        ipv4_address: 172.0.22.254
+      network_server:
+        ipv4_address: 172.0.20.254
+    depends_on:
+      - backend
+      - frontend
     restart: unless-stopped
 
 networks:
