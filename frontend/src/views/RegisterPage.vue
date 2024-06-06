@@ -7,7 +7,7 @@ import InputText from './../components/InputText.vue'
 import InputFile from './../components/InputFile.vue'
 import BtnForm from './../components/BtnForm.vue'
 import exIdCard from '/images/ex-id-card.jpg'
-
+import { checkBlobURL } from './../libs/previewBinary'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, helpers, numeric } from '@vuelidate/validators'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -55,11 +55,13 @@ const registerForm = ref({
   idCard: null
 })
 let $v = useVuelidate(rules, registerForm.value)
-onMounted(() => {
+onMounted(async () => {
   const data = localStorage.getItem('dataForm')
   if (data) {
     registerForm.value = JSON.parse(data)
     $v = useVuelidate(rules, registerForm.value)
+    const check = await checkBlobURL(registerForm.value.idCard?.preview)
+    if (!check) registerForm.value.idCard = null
   }
 })
 
@@ -76,15 +78,17 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div id="navbar" class="navbar text-white p-0 bg-primary-200 flex justify-between">
-    <button class="btn btn-ghost m-0 p-0"><LogoGiffarine class="h-[80px]" /></button>
+  <div id="navbar" class="navbar text-white px-5 bg-primary-200 flex justify-between">
+    <button class="btn btn-ghost m-0 p-0 overflow-hidden">
+      <LogoGiffarine class="h-[80px] overflow-hidden" />
+    </button>
     <div class="font-light">
       <button class="btn btn-ghost font-light btn-xs font-inter text-xss">สมัครสมาชิก</button>
       <button class="btn btn-ghost font-light text-xss">สอบถาม</button>
     </div>
   </div>
   <div id="hero" class="flex">
-    <div id="intorduce" class="pl-[2%] w-1/2 text-primary-200 gap-2 flex flex-col">
+    <div id="intorduce" class="pl-[2%] min-h-[380px] w-1/2 text-primary-200 gap-2 flex flex-col">
       <h1 class="text-lg">ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครตัวแทน Giffarine</h1>
       <div class="flex font-light flex-col gap-3">
         <p>สิทธิพิเศษ</p>
@@ -104,7 +108,7 @@ const submitForm = async () => {
     <div id="main-image" class="w-1/2 relative">
       <EllipseBackground class="absolute bottom-0 right-0" />
       <div class="bottom-[0%] rounded-bl-[45%] w-max overflow-hidden absolute right-0">
-        <NawaImg class="" />
+        <NawaImg />
       </div>
     </div>
   </div>
@@ -193,7 +197,7 @@ const submitForm = async () => {
       </label>
 
       <InputText
-        class="w-[200px]"
+        class=""
         v-model="registerForm.zipCode"
         title="รหัสไปรษณีย์"
         placeholder="xxxxx"
@@ -205,6 +209,7 @@ const submitForm = async () => {
         v-model="registerForm.idCard"
         :errors="$v.idCard.$errors"
       />
+
       <div class="h-[350px] flex justify-center items-center">
         <img class="h-[90%]" :src="registerForm.idCard?.preview || exIdCard" alt="test" />
       </div>
