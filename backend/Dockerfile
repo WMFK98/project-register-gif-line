@@ -16,7 +16,9 @@ FROM openjdk:17-jdk-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar /app.jar
+COPY --from=build /app/target/*.jar /app/app.jar
+COPY /images /app/images
 
-CMD ["java", "-jar", "/app.jar"]
+
+CMD ["java", "-jar", "/app/app.jar"]
 
