@@ -3,6 +3,8 @@ import { useRouter } from 'vue-router'
 import BtnForm from './../components/BtnForm.vue'
 import { checkBlobURL } from './../libs/previewBinary'
 import { onMounted, ref } from 'vue'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 const dataForm = ref()
 const router = useRouter()
 onMounted(async () => {

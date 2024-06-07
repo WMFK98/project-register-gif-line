@@ -11,9 +11,10 @@ import { checkBlobURL } from './../libs/previewBinary'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, helpers, numeric } from '@vuelidate/validators'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-
+import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 const router = useRouter()
+const route = useRoute()
 const checkTypeFile = (value) => {
   const type = value.type
   return type.includes('jpg') || type.includes('png') || type.includes('jpeg')
@@ -57,7 +58,6 @@ const registerForm = ref({
 let $v = useVuelidate(rules, registerForm.value)
 onMounted(async () => {
   const data = localStorage.getItem('dataForm')
-
   if (data) {
     registerForm.value = JSON.parse(data)
     $v = useVuelidate(rules, registerForm.value)
@@ -74,7 +74,16 @@ watch(
 
 const submitForm = async () => {
   const result = await $v.value.$validate()
-  result && router.push({ name: 'validate' })
+  if (result) router.push({ name: 'validate' })
+  else
+    toast('เกิดข้อผิดพลาด โปรดตรวจสอบข้อมูลของท่าน', {
+      theme: 'auto',
+      type: 'error',
+      toastStyle: {
+        fontFamily: 'kanit',
+        color: '#070F2B'
+      }
+    })
 }
 </script>
 
@@ -84,8 +93,12 @@ const submitForm = async () => {
       <LogoGiffarine class="h-[80px] overflow-hidden" />
     </button>
     <div class="font-light">
-      <button class="btn btn-ghost font-light btn-xs font-inter text-xss">สมัครสมาชิก</button>
-      <button class="btn btn-ghost font-light text-xss">สอบถาม</button>
+      <a href="#form" class="font-light">
+        <button class="btn btn-ghost font-light btn-xs font-inter text-xss">สมัครสมาชิก</button>
+      </a>
+      <a href="https://lin.ee/mXAFYKj" target="_blank">
+        <button class="btn btn-ghost font-light btn-xs font-inter text-xss">สอบถาม</button>
+      </a>
     </div>
   </div>
   <div id="hero" class="flex">
@@ -116,7 +129,7 @@ const submitForm = async () => {
   <div id="register" class="flex flex-col p-[2%] font-light">
     <div class="flex text-sm items-center gap-4 text-primary-100">
       <hr class="flex-1 border-primary-100" />
-      <p class="flex-3">สมัครสมาชิก</p>
+      <p id="form" class="flex-3">สมัครสมาชิก</p>
       <hr class="flex-1 border-primary-100" />
     </div>
 

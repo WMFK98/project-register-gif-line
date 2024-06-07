@@ -8,9 +8,11 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { useRouter } from 'vue-router'
 import { checkBlobURL } from './../libs/previewBinary'
+import { toast } from 'vue3-toastify'
+
 import axios from 'axios'
 const url = import.meta.env.VITE_URL_API
-
+const isLoading = ref(false)
 const dataForm = ref()
 const checkData = () =>
   dataForm.value?.prefix &&
@@ -19,13 +21,13 @@ const checkData = () =>
   dataForm.value?.birthDate &&
   dataForm.value?.address &&
   dataForm.value?.zipCode &&
-  dataForm.value?.idCard
+  dataForm.value?.id
 
 onMounted(async () => {
   dataForm.value = JSON.parse(localStorage.getItem('dataForm'))
-  const haveImge = await checkBlobURL(dataForm.value.idCard.preview)
+  const haveImge = await checkBlobURL(dataForm.value?.idCard?.preview)
 
-  if (!haveImge || !checkData()) router.push({ name: 'register' })
+  if (!haveImge || !checkData()) router.push({ name: 'register', hash: '#error' })
 })
 
 const payment = ref({ img: null })
@@ -55,7 +57,22 @@ const submitForm = async () => {
       address,
       zipCode
     }
-    const response = await axios.post(`${url}/broadcast`, data)
+    isLoading.value = true
+    const response = await toast.promise(
+      axios.post(`${url}/broadcast`, data),
+      {
+        pending: 'ระบบกำลังนำส่งข้อมูลของคุณ',
+        success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเรา👏',
+        error: 'เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง'
+      },
+      {
+        toastStyle: {
+          fontFamily: 'kanit',
+          color: '#070F2B'
+        }
+      }
+    )
+    isLoading.value = false
     if (response.status === 200) {
       localStorage.clear()
       router.push({ name: 'register' })
@@ -86,8 +103,9 @@ const $v = useVuelidate(rules, payment.value)
       </div>
 
       <div class="flex gap-3">
-        <BtnForm text="ยืนยัน" @click="submitForm" /><BtnForm
+        <BtnForm :is-disabled="isLoading" text="ยืนยัน" @click="submitForm" /><BtnForm
           @click="$router.back()"
+          :is-disabled="isLoading"
           class="text-sm"
           text="ย้อนกลับ"
         />

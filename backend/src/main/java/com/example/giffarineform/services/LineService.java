@@ -72,8 +72,13 @@ public class LineService {
         imageIdCard.put("originalContentUrl","https://project-register-gif-line.vercel.app/images/ex-id-card.jpg" );
         imageIdCard.put("previewImageUrl","https://project-register-gif-line.vercel.app/images/ex-id-card.jpg" );
 
+        Map<String, Object> imagePayment = new HashMap<>();
+        imagePayment.put("type", "image");
+        imagePayment.put("originalContentUrl"," https://project-register-gif-line.vercel.app/images/ex-payment.jpeg" );
+        imagePayment.put("previewImageUrl"," https://project-register-gif-line.vercel.app/images/ex-payment.jpeg" );
+
         Map<String, Object> data = new HashMap<>();
-        data.put("messages", new Object[]{messageText,imageIdCard});
+        data.put("messages", new Object[]{messageText,imageIdCard,imagePayment});
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
