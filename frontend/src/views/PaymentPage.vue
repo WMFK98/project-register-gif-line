@@ -45,15 +45,15 @@ const rules = computed(() => {
 const submitForm = async () => {
   const result = await $v.value.$validate()
   if (result && checkData()) {
-    const { name, prefix, birthDate, phone, address, zipCode, idCard } = dataForm.value
+    const { id, name, prefix, birthDate, phone, address, zipCode } = dataForm.value
     const data = {
+      id,
       name,
       prefix,
       birthDate,
       phone,
       address,
-      zipCode,
-      idCard
+      zipCode
     }
     const response = await axios.post(`${url}/broadcast`, data)
     if (response.status === 200) {

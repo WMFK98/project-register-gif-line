@@ -11,10 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -67,7 +65,7 @@ public class LineService {
         messageText.put("type", "text");
         messageText.put("text", String.format("ชื่อ %s %s\nวันเกิด %s เบอโทร %s\nที่อยู่ %s รหัสไปรษณีย์ %s\nบัตรประชาชน %s",
                 dataForm.getPrefix(), dataForm.getName(), dataForm.getBirthDate(),
-                dataForm.getPhone(), dataForm.getAddress(), dataForm.getZipCode(),dataForm.getIdCard()));
+                dataForm.getPhone(), dataForm.getAddress(), dataForm.getZipCode(),dataForm.getId()));
 
         Map<String, Object> imageIdCard = new HashMap<>();
         imageIdCard.put("type", "image");

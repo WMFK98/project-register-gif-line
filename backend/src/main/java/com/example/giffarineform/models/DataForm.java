@@ -1,7 +1,6 @@
 package com.example.giffarineform.models;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class DataForm {
@@ -11,6 +10,6 @@ public class DataForm {
     private String phone;
     private String address;
     private String zipCode;
-    private String idCard;
+    private String id;
 
 }
