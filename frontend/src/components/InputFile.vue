@@ -1,27 +1,31 @@
 <script setup>
 import { computed } from 'vue'
-import { previewBinaryFile } from './../libs/previewBinary.js'
+import { useImageStore } from '@/store/imageStore'
+const imageStore = useImageStore()
+const { setCardImg, setPaymentImg } = imageStore
 const props = defineProps({
   title: String,
   selectText: String,
   defaultText: String,
-  modelValue: Object,
+  imgStored: Object,
   errors: Array
 })
 
 const prefix = computed(
-  () => props.modelValue.name.split('.')[props.modelValue.name.split('.').length - 1]
+  () => props.imgStored.name.split('.')[props.imgStored.name.split('.').length - 1]
 )
 const nameImage = computed(() =>
-  props.modelValue.name.length > 20
-    ? props.modelValue.name.slice(0, 25) + '...*' + prefix.value
-    : props.modelValue.name
+  props.imgStored.name.length > 20
+    ? props.imgStored.name.slice(0, 25) + '...*' + prefix.value
+    : props.imgStored.name
 )
 
-const emits = defineEmits(['update:modelValue'])
 const selectImg = async (e) => {
   const file = await e.target.files[0]
-  emits('update:modelValue', { name: file.name, type: file.type, preview: previewBinaryFile(file) })
+
+  console.log(props.imgStored === imageStore.cardImg)
+  if (props.imgStored === imageStore.cardImg) setCardImg(file)
+  else setPaymentImg(file)
 }
 </script>
 <template>
@@ -32,7 +36,7 @@ const selectImg = async (e) => {
         {{ selectText || 'เลือกรูปของคุณ' }}
       </p>
       <p class="bg-slate-100 text-primary-100 w-[250px] p-1 rounded-r-md border-[1px]">
-        {{ modelValue ? nameImage : defaultText || 'ยังไม่มีไฟล์ สกุล jpg,png,jpeg' }}
+        {{ imgStored ? nameImage : defaultText || 'ยังไม่มีไฟล์ สกุล jpg,png,jpeg' }}
       </p>
     </div>
     <input @change="selectImg" type="file" class="file-input hidden" />

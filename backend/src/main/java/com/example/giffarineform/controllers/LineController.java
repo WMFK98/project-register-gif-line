@@ -16,7 +16,7 @@ public class LineController {
     private LineService service;
 
     @PostMapping("/broadcast")
-    public ResponseEntity<Object> broadcastLine(@RequestBody DataForm dataForm){
+    public ResponseEntity<Object> broadcastLine(@ModelAttribute DataForm dataForm){
         return ResponseEntity.ok(service.sendBroadcast(dataForm));
     }
 
@@ -29,10 +29,7 @@ public class LineController {
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename){
         Resource file = service.loadFileAsResource(filename);
-        String fileName = file.getFilename();
-        String extension = fileName.substring(fileName.length()-3);
-        if(extension.equalsIgnoreCase("pdf"))
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(file);
+
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
     }
 }

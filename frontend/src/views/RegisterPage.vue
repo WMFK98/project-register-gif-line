@@ -11,12 +11,15 @@ import { checkBlobURL } from './../libs/previewBinary'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, helpers, numeric } from '@vuelidate/validators'
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import { useImageStore } from '@/store/imageStore'
+import { storeToRefs } from 'pinia'
+const imageStore = useImageStore()
+const { cardImg } = storeToRefs(imageStore)
 const router = useRouter()
-const route = useRoute()
-const checkTypeFile = (value) => {
-  const type = value.type
+const checkTypeFile = () => {
+  const type = cardImg.value.type
   return type.includes('jpg') || type.includes('png') || type.includes('jpeg')
 }
 const rules = computed(() => {
@@ -52,8 +55,7 @@ const registerForm = ref({
   phone: '',
   id: '',
   address: '',
-  zipCode: '',
-  idCard: null
+  zipCode: ''
 })
 let $v = useVuelidate(rules, registerForm.value)
 onMounted(async () => {
@@ -61,7 +63,7 @@ onMounted(async () => {
   if (data) {
     registerForm.value = JSON.parse(data)
     $v = useVuelidate(rules, registerForm.value)
-    const check = await checkBlobURL(registerForm.value.idCard?.preview)
+    const check = await checkBlobURL(await imageStore.cardImgPreview)
     if (!check) registerForm.value.idCard = null
   }
 })
@@ -220,12 +222,16 @@ const submitForm = async () => {
       />
       <InputFile
         title="อัพโหลดรูปภาพบัตรประชาชน"
-        v-model="registerForm.idCard"
+        :img-stored="cardImg"
         :errors="$v.idCard.$errors"
       />
 
       <div class="h-[350px] flex justify-center items-center">
-        <img class="h-[90%]" :src="registerForm.idCard?.preview || exIdCard" alt="test" />
+        <img
+          class="h-[90%]"
+          :src="imageStore.cardImgPreview || exIdCard"
+          :alt="cardImg?.name || 'test'"
+        />
       </div>
       <BtnForm @click="submitForm" text="สมัครสมาชิก" />
     </div>

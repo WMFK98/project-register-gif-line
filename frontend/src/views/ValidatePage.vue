@@ -3,13 +3,17 @@ import { useRouter } from 'vue-router'
 import BtnForm from './../components/BtnForm.vue'
 import { checkBlobURL } from './../libs/previewBinary'
 import { onMounted, ref } from 'vue'
-import { toast } from 'vue3-toastify'
+import { useImageStore } from '@/store/imageStore'
 import 'vue3-toastify/dist/index.css'
+const imageStore = useImageStore()
 const dataForm = ref()
 const router = useRouter()
 onMounted(async () => {
+  const urlImage = await imageStore.cardImgPreview
+
+  if (!urlImage) router.push({ name: 'register' })
   dataForm.value = JSON.parse(localStorage.getItem('dataForm'))
-  const haveImge = await checkBlobURL(dataForm.value.idCard.preview)
+  const haveImge = await checkBlobURL(urlImage)
   const checkData = () =>
     dataForm.value?.prefix &&
     dataForm.value?.name &&
@@ -17,7 +21,9 @@ onMounted(async () => {
     dataForm.value?.birthDate &&
     dataForm.value?.address &&
     dataForm.value?.zipCode &&
-    dataForm.value?.idCard
+    dataForm.value?.id
+
+  console.log(!checkData())
   if (!haveImge || !checkData()) router.push({ name: 'register' })
 })
 </script>
@@ -31,7 +37,7 @@ onMounted(async () => {
         <div class="flex flex-col gap-2">
           <p>รูปบัตรประชาชน</p>
           <div class="h-[300px] flex justify-center items-center">
-            <img class="h-[90%]" :src="dataForm?.idCard.preview" alt="test" />
+            <img class="h-[90%]" :src="imageStore.cardImgPreview" alt="test" />
           </div>
 
           <img class="min-w-auto max-h-[250px]" alt="" />

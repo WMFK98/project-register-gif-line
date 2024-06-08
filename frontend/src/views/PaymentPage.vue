@@ -11,9 +11,14 @@ import { checkBlobURL } from './../libs/previewBinary'
 import { toast } from 'vue3-toastify'
 
 import axios from 'axios'
+import { useImageStore } from '@/store/imageStore'
+import { storeToRefs } from 'pinia'
 const url = import.meta.env.VITE_URL_API
 const isLoading = ref(false)
 const dataForm = ref()
+const imageStore = useImageStore()
+const { paymentImg } = storeToRefs(imageStore)
+
 const checkData = () =>
   dataForm.value?.prefix &&
   dataForm.value?.name &&
@@ -24,7 +29,9 @@ const checkData = () =>
   dataForm.value?.id
 
 onMounted(async () => {
-  dataForm.value = JSON.parse(localStorage.getItem('dataForm'))
+  const urlImage = await imageStore.cardImgPreview
+  if (!urlImage) router.push({ name: 'register' })
+  dataForm.value = await JSON.parse(localStorage.getItem('dataForm'))
   const haveImge = await checkBlobURL(dataForm.value?.idCard?.preview)
 
   if (!haveImge || !checkData()) router.push({ name: 'register', hash: '#error' })
@@ -32,8 +39,8 @@ onMounted(async () => {
 
 const payment = ref({ img: null })
 const router = useRouter()
-const checkTypeFile = (value) => {
-  const type = value.type
+const checkTypeFile = () => {
+  const type = paymentImg.value.type
   return type.includes('jpg') || type.includes('png') || type.includes('jpeg')
 }
 const rules = computed(() => {
@@ -47,19 +54,23 @@ const rules = computed(() => {
 const submitForm = async () => {
   const result = await $v.value.$validate()
   if (result && checkData()) {
-    const { id, name, prefix, birthDate, phone, address, zipCode } = dataForm.value
-    const data = {
-      id,
-      name,
-      prefix,
-      birthDate,
-      phone,
-      address,
-      zipCode
-    }
-    isLoading.value = true
+    const { id, name, prefix, birthDate, zipCode, phone, address } = await dataForm.value
+    const formData = new FormData()
+    formData.append('id', id)
+    formData.append('name', name)
+    formData.append('prefix', prefix)
+    formData.append('birthDate', birthDate)
+    formData.append('phone', phone)
+    formData.append('address', address)
+    formData.append('zipCode', zipCode)
+    formData.append('cardImg', imageStore.cardImg)
+
     const response = await toast.promise(
-      axios.post(`${url}/broadcast`, data),
+      axios.post(`${url}/broadcast`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }),
       {
         pending: 'ระบบกำลังนำส่งข้อมูลของคุณ',
         success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเรา👏',
@@ -72,10 +83,12 @@ const submitForm = async () => {
         }
       }
     )
-    isLoading.value = false
+    // setTimeout(() => router.push({ name: 'register' }), 5000)
     if (response.status === 200) {
-      localStorage.clear()
-      router.push({ name: 'register' })
+      console.log('done')
+      // localStorage.clear()
+      // isLoading.value = false
+      // router.push({ name: 'register' })
     }
   }
 }
@@ -96,9 +109,9 @@ const $v = useVuelidate(rules, payment.value)
         <p>ชื่อ : นวพรรณ์ เเซ่ตั้ง</p>
         <p>จำนวนเงิน 180 บาท</p>
 
-        <InputFile title="รูปหลักฐานการโอน" v-model="payment.img" :errors="$v.img.$errors" />
+        <InputFile title="รูปหลักฐานการโอน" :img-stored="paymentImg" :errors="$v.img.$errors" />
         <div class="h-[350px] flex justify-center items-center">
-          <img class="h-[90%]" :src="payment.img?.preview || exPayment" alt="test" />
+          <img class="h-[90%]" :src="imageStore.paymentPreview || exPayment" alt="" />
         </div>
       </div>
 
