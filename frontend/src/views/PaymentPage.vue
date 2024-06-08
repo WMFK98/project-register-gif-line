@@ -83,12 +83,11 @@ const submitForm = async () => {
         }
       }
     )
-    // setTimeout(() => router.push({ name: 'register' }), 5000)
+    setTimeout(() => router.push({ name: 'register' }), 5000)
     if (response.status === 200) {
-      console.log('done')
-      // localStorage.clear()
-      // isLoading.value = false
-      // router.push({ name: 'register' })
+      localStorage.clear()
+      isLoading.value = false
+      router.push({ name: 'register' })
     }
   }
 }
