@@ -83,9 +83,11 @@ const submitForm = async () => {
         }
       }
     )
-    setTimeout(() => router.push({ name: 'register' }), 5000)
+    console.log(response)
+    // setTimeout(() => router.push({ name: 'register' }), 5000)
     if (response.status === 200) {
       localStorage.clear()
+      imageStore.clearAll()
       isLoading.value = false
       router.push({ name: 'register' })
     }

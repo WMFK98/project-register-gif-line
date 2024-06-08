@@ -69,7 +69,7 @@ public class LineService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }, 10, TimeUnit.SECONDS);
+            }, 30, TimeUnit.SECONDS);
             return new ByteArrayResource(fileContent);
 
         } catch (IOException e) {
