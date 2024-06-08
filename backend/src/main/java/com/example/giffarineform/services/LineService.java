@@ -89,7 +89,7 @@ public class LineService {
             if (dataForm.getCardImg().getOriginalFilename().contains(".")) {
                 fileExtension = dataForm.getCardImg().getOriginalFilename().substring(dataForm.getCardImg().getOriginalFilename().lastIndexOf("."));
             }
-            randomFileName = generateRandomString(20) + fileExtension;
+            randomFileName = generateRandomString(50) + fileExtension;
             Path targetLocation = this.findStorageLocation.resolve(randomFileName);
             Files.copy(dataForm.getCardImg().getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
@@ -120,11 +120,7 @@ public class LineService {
         headers.set("Authorization", "Bearer " + this.keyChannel);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(data, headers);
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.schedule(() -> {
             restTemplate.exchange(  this.url+ "/broadcast", HttpMethod.POST, requestEntity, String.class);
-        }, 10, TimeUnit.SECONDS);
         return dataForm;
     }
 

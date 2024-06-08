@@ -15,4 +15,6 @@ public class DataForm {
     private String zipCode;
     @JsonIgnore
     private MultipartFile cardImg;
+    @JsonIgnore
+    private MultipartFile paymentImg;
 }
