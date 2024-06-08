@@ -120,7 +120,11 @@ public class LineService {
         headers.set("Authorization", "Bearer " + this.keyChannel);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(data, headers);
-       ResponseEntity<String> test = restTemplate.exchange(  this.url+ "/broadcast", HttpMethod.POST, requestEntity, String.class);
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.schedule(() -> {
+            restTemplate.exchange(  this.url+ "/broadcast", HttpMethod.POST, requestEntity, String.class);
+        }, 10, TimeUnit.SECONDS);
         return dataForm;
     }
 
