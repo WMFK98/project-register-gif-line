@@ -90,7 +90,7 @@ public class LineService {
 
     public DataForm sendBroadcast(DataForm dataForm) {
         String cardImgName = storeRandomFileName(dataForm.getCardImg());
-        String paymentImgName = storeRandomFileName(dataForm.getCardImg());
+        String paymentImgName = storeRandomFileName(dataForm.getPaymentImg());
         Map<String, Object> messageText = new HashMap<>();
         messageText.put("type", "text");
         messageText.put("text", String.format("ชื่อ %s %s\nวันเกิด %s เบอโทร %s\nที่อยู่ %s รหัสไปรษณีย์ %s\nบัตรประชาชน %s",

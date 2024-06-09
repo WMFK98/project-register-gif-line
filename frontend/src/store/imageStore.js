@@ -15,7 +15,7 @@ export const useImageStore = defineStore('ImageStore', {
     },
     clearAll() {
       this.cardImg = null
-      this.cardImg = null
+      this.paymentImg = null
     }
   }
 })

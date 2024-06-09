@@ -17,7 +17,7 @@ const url = import.meta.env.VITE_URL_API
 const isLoading = ref(false)
 const dataForm = ref()
 const imageStore = useImageStore()
-const { paymentImg } = storeToRefs(imageStore)
+const { paymentImg, cardImg } = storeToRefs(imageStore)
 
 const checkData = () =>
   dataForm.value?.prefix &&
@@ -63,9 +63,8 @@ const submitForm = async () => {
     formData.append('phone', phone)
     formData.append('address', address)
     formData.append('zipCode', zipCode)
-    formData.append('cardImg', imageStore.cardImg)
-    formData.append('paymentImg', imageStore.paymentImg)
-
+    formData.append('cardImg', cardImg.value)
+    formData.append('paymentImg', paymentImg.value)
     const response = await toast
       .promise(
         axios.post(`${url}/broadcast`, formData, {
