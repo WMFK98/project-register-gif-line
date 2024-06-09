@@ -7,6 +7,8 @@ services:
     networks:
       network_server:
         ipv4_address: 172.0.20.2
+    volumes:
+      - image-data:/app/images:ro
     restart: unless-stopped
 
   frontend:
@@ -19,7 +21,7 @@ services:
         ipv4_address: 172.0.22.2
     restart: unless-stopped
 
-  reverse_proxy: 
+  reverse_proxy:
     image: nginx:latest
     restart: unless-stopped
     ports:
@@ -41,11 +43,10 @@ services:
   certbot:
     image: certbot/certbot
     container_name: certbot
-    volumes: 
+    volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email wishira2013.coth@gmail.com -d kunmuay-giffrine.com --agree-tos
-
 
 networks:
   network_server:
@@ -56,3 +57,6 @@ networks:
     ipam:
       config:
         - subnet: "172.0.22.0/24"
+
+volumes:
+  images-data:
