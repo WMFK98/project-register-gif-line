@@ -57,6 +57,7 @@ public class LineService {
     public synchronized Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = this.findStorageLocation.resolve(fileName).normalize();
+            System.out.println(filePath.toString());
             if (!Files.exists(filePath)) {
                 throw new RuntimeException("File not found: " + fileName);
             }
@@ -82,6 +83,7 @@ public class LineService {
             randomFileName = generateRandomString(32) + fileExtension;
             Path targetLocation = this.findStorageLocation.resolve(randomFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File stored: " + targetLocation.toString());
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file " + fileName + ".Please try again", ex);
         }
