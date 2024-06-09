@@ -13,6 +13,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,18 +57,17 @@ public class LineService {
     }
 
 
-    public synchronized Resource loadFileAsResource(String fileName) {
+    public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = this.findStorageLocation.resolve(fileName).normalize();
-            System.out.println(filePath.toString());
-            if (!Files.exists(filePath)) {
-                throw new RuntimeException("File not found: " + fileName);
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found" + fileName);
             }
-            byte[] fileContent = Files.readAllBytes(filePath);
-            return new ByteArrayResource(fileContent);
-
-        } catch (IOException e) {
-            throw new RuntimeException("File operation error: " + fileName, e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("File operation error" + fileName, e);
         }
     }
 
@@ -97,28 +99,57 @@ public class LineService {
         messageText.put("type", "text");
         messageText.put("text", String.format("ชื่อ %s %s\nวันเกิด %s เบอโทร %s\nที่อยู่ %s รหัสไปรษณีย์ %s\nบัตรประชาชน %s",
                 dataForm.getPrefix(), dataForm.getName(), dataForm.getBirthDate(),
-                dataForm.getPhone(), dataForm.getAddress(), dataForm.getZipCode(),dataForm.getId()));
+                dataForm.getPhone(), dataForm.getAddress(), dataForm.getZipCode(), dataForm.getId()));
 
         Map<String, Object> imageIdCard = new HashMap<>();
         imageIdCard.put("type", "image");
-        imageIdCard.put("originalContentUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+cardImgName);
-        imageIdCard.put("previewImageUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+cardImgName );
+        imageIdCard.put("originalContentUrl", "https://kunmuay-giffrine.com/api/v1/line/image/" + cardImgName);
+        imageIdCard.put("previewImageUrl", "https://kunmuay-giffrine.com/api/v1/line/image/" + cardImgName);
 
         Map<String, Object> imagePayment = new HashMap<>();
         imagePayment.put("type", "image");
-        imagePayment.put("originalContentUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+paymentImgName );
-        imagePayment.put("previewImageUrl","https://kunmuay-giffrine.com/api/v1/line/image/" +paymentImgName);
+        imagePayment.put("originalContentUrl", "https://kunmuay-giffrine.com/api/v1/line/image/" + paymentImgName);
+        imagePayment.put("previewImageUrl", "https://kunmuay-giffrine.com/api/v1/line/image/" + paymentImgName);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("messages", new Object[]{messageText,imageIdCard,imagePayment});
+        data.put("messages", new Object[]{messageText, imageIdCard, imagePayment});
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         headers.set("Authorization", "Bearer " + this.keyChannel);
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(data, headers);
-            restTemplate.exchange(  this.url+ "/broadcast", HttpMethod.POST, requestEntity, String.class);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(this.url + "/broadcast", HttpMethod.POST, requestEntity, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Broadcast sent successfully");
+            } else {
+                System.out.println("Failed to send broadcast, status code: " + response.getStatusCode());
+                removeFile(cardImgName);
+                removeFile(paymentImgName);
+
+            }
+        }  catch (RestClientException ex) {
+            removeFile(cardImgName);
+            removeFile(paymentImgName);
+        }
         return dataForm;
+    }
+
+
+    private void removeFile(String filename) {
+        try {
+            Path filePath = this.findStorageLocation.resolve(filename).normalize();
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            } else {
+                throw new RuntimeException("File not found " + filename);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("File operlation error: " + filename, e);
+        }
     }
 
     private String generateRandomString(int length) {
