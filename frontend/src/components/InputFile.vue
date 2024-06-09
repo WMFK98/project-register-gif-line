@@ -16,7 +16,7 @@ const prefix = computed(
 )
 const nameImage = computed(() =>
   props.imgStored.name.length > 20
-    ? props.imgStored.name.slice(0, 25) + '...*' + prefix.value
+    ? props.imgStored.name.slice(0, 20) + '...*' + prefix.value
     : props.imgStored.name
 )
 
@@ -33,7 +33,7 @@ const selectImg = async (e) => {
       <p class="bg-primary-100 rounded-l-md text-white border-[1px] p-1">
         {{ selectText || 'เลือกรูปของคุณ' }}
       </p>
-      <p class="bg-slate-100 text-primary-100 w-[250px] p-1 rounded-r-md border-[1px]">
+      <p class="bg-slate-100 text-primary-100 w-[200px] p-1 rounded-r-md border-[1px]">
         {{ imgStored ? nameImage : defaultText || 'ยังไม่มีไฟล์ สกุล jpg,png,jpeg' }}
       </p>
     </div>
