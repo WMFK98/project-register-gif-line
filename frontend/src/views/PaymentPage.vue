@@ -99,7 +99,7 @@ const $v = useVuelidate(rules, payment.value)
 </script>
 
 <template>
-  <div class="flex flex-col p-3 items-center text-primary-100">
+  <div class="flex flex-col p-2 items-center text-primary-100">
     <div class="flex flex-col items-center w-full gap-2">
       <h1 class="text-lg">ยืนยันการชำระเงิน</h1>
       <QRCode class="h-[250px]" />
