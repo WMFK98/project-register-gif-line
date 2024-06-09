@@ -99,11 +99,11 @@ const $v = useVuelidate(rules, payment.value)
 </script>
 
 <template>
-  <div class="flex flex-col p-5 items-center text-primary-100">
-    <div class="flex flex-col items-center gap-2">
+  <div class="flex flex-col p-3 items-center text-primary-100">
+    <div class="flex flex-col items-center w-full gap-2">
       <h1 class="text-lg">ยืนยันการชำระเงิน</h1>
       <QRCode class="h-[250px]" />
-      <div class="flex flex-col mx-2 gap-2 w-screen sm:w-max px-3">
+      <div class="flex flex-col gap-2">
         <p>พร้อมเพย์ : 092-469-9587</p>
         <hr />
         <p>ธนาคาร : ไทยพาณิชย์</p>
@@ -112,8 +112,8 @@ const $v = useVuelidate(rules, payment.value)
         <p>จำนวนเงิน 180 บาท</p>
 
         <InputFile title="รูปหลักฐานการโอน" :img-stored="paymentImg" :errors="$v.img.$errors" />
-        <div class="h-[350px] flex justify-center items-center">
-          <img class="sm:h-[90%]" :src="imageStore.paymentPreview || exPayment" alt="" />
+        <div class="flex justify-center items-center h-[350px]">
+          <img class="max-w-[90%]" :src="imageStore.paymentPreview || exPayment" alt="" />
         </div>
       </div>
 
