@@ -8,7 +8,7 @@ services:
       network_server:
         ipv4_address: 172.0.20.2
     volumes:
-      - image-data:/app/images:ro
+      - image-data:/app/images:rw
     restart: unless-stopped
 
   frontend:
