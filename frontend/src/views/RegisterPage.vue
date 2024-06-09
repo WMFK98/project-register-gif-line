@@ -15,9 +15,12 @@ import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { useImageStore } from '@/store/imageStore'
 import { storeToRefs } from 'pinia'
+import axios from 'axios'
 const imageStore = useImageStore()
+const isServerRun = ref(false)
 const { cardImg } = storeToRefs(imageStore)
 const router = useRouter()
+const url = import.meta.env.VITE_URL_API
 const checkTypeFile = () => {
   const type = cardImg.value.type
   return type.includes('jpg') || type.includes('png') || type.includes('jpeg')
@@ -59,6 +62,37 @@ const registerForm = ref({
 })
 let $v = useVuelidate(rules, registerForm.value)
 onMounted(async () => {
+  await axios
+    .get(`${url}/test`)
+    .then((res) => {
+      if (res.status === 200) isServerRun.value === true
+      else
+        toast('ระบบยังไม่พร้อมใช้งานในขณะนี้ โปรดสมัครผ่านช่องทาง line', {
+          theme: 'auto',
+          type: 'error',
+          closeOnClick: false,
+          pauseOnHover: false,
+          autoClose: false,
+          toastStyle: {
+            fontFamily: 'kanit',
+            color: '#070F2B'
+          }
+        })
+    })
+    .catch(() =>
+      toast('ระบบยังไม่พร้อมใช้งานในขณะนี้ โปรดสมัครผ่านช่องทาง line', {
+        theme: 'auto',
+        type: 'error',
+        closeOnClick: false,
+        pauseOnHover: false,
+        autoClose: false,
+        toastStyle: {
+          fontFamily: 'kanit',
+          color: '#070F2B'
+        }
+      })
+    )
+
   const data = localStorage.getItem('dataForm')
   if (data) {
     registerForm.value = JSON.parse(data)
@@ -233,7 +267,13 @@ const submitForm = async () => {
           :alt="cardImg?.name || 'test'"
         />
       </div>
-      <BtnForm @click="submitForm" text="สมัครสมาชิก" />
+      <p v-show="!isServerRun" class="text-red-500 text-center">
+        ระบบยังไม่พร้อมใช้งานในขณะนี้ ขออภัยในความไม่สะดวก
+        <a class="text-blue-700 cursor-pointer link" href="https://lin.ee/mXAFYKj"
+          >โปรดสมัครผ่านช่องทาง line</a
+        >
+      </p>
+      <BtnForm :is-disabled="!isServerRun" @click="submitForm" text="สมัครสมาชิก" />
     </div>
   </div>
 </template>

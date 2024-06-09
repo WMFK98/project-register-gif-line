@@ -14,6 +14,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,18 +60,7 @@ public class LineService {
             if (!Files.exists(filePath)) {
                 throw new RuntimeException("File not found: " + fileName);
             }
-
             byte[] fileContent = Files.readAllBytes(filePath);
-
-            // Schedule file deletion after 10 seconds
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-            scheduler.schedule(() -> {
-                try {
-                    Files.delete(filePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }, 30, TimeUnit.SECONDS);
             return new ByteArrayResource(fileContent);
 
         } catch (IOException e) {
@@ -77,25 +68,29 @@ public class LineService {
         }
     }
 
-
-    public DataForm sendBroadcast(DataForm dataForm) {
-        String fileName = StringUtils.cleanPath(dataForm.getCardImg().getOriginalFilename());
+    private String storeRandomFileName(MultipartFile file){
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         String randomFileName = "";
         try {
             if (fileName.contains("..")) {
                 throw new RuntimeException("Sorry! Filename contains invalid path sequence" + fileName);
             }
             String fileExtension = "";
-            if (dataForm.getCardImg().getOriginalFilename().contains(".")) {
-                fileExtension = dataForm.getCardImg().getOriginalFilename().substring(dataForm.getCardImg().getOriginalFilename().lastIndexOf("."));
+            if (file.getOriginalFilename().contains(".")) {
+                fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
             }
-            randomFileName = generateRandomString(50) + fileExtension;
+            randomFileName = generateRandomString(32) + fileExtension;
             Path targetLocation = this.findStorageLocation.resolve(randomFileName);
-            Files.copy(dataForm.getCardImg().getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file " + fileName + ".Please try again", ex);
         }
+        return  randomFileName;
+    }
 
+    public DataForm sendBroadcast(DataForm dataForm) {
+        String cardImgName = storeRandomFileName(dataForm.getCardImg());
+        String paymentImgName = storeRandomFileName(dataForm.getCardImg());
         Map<String, Object> messageText = new HashMap<>();
         messageText.put("type", "text");
         messageText.put("text", String.format("ชื่อ %s %s\nวันเกิด %s เบอโทร %s\nที่อยู่ %s รหัสไปรษณีย์ %s\nบัตรประชาชน %s",
@@ -104,16 +99,16 @@ public class LineService {
 
         Map<String, Object> imageIdCard = new HashMap<>();
         imageIdCard.put("type", "image");
-        imageIdCard.put("originalContentUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+randomFileName );
-        imageIdCard.put("previewImageUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+randomFileName );
+        imageIdCard.put("originalContentUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+cardImgName);
+        imageIdCard.put("previewImageUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+cardImgName );
 
-//        Map<String, Object> imagePayment = new HashMap<>();
-//        imagePayment.put("type", "image");
-//        imagePayment.put("originalContentUrl","https://kunmuay-giffrine.com/api/v1/line/image/test.png" );
-//        imagePayment.put("previewImageUrl","https://kunmuay-giffrine.com/api/v1/line/image/test.png" );
+        Map<String, Object> imagePayment = new HashMap<>();
+        imagePayment.put("type", "image");
+        imagePayment.put("originalContentUrl","https://kunmuay-giffrine.com/api/v1/line/image/"+paymentImgName );
+        imagePayment.put("previewImageUrl","https://kunmuay-giffrine.com/api/v1/line/image/" +paymentImgName);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("messages", new Object[]{messageText,imageIdCard});
+        data.put("messages", new Object[]{messageText,imageIdCard,imagePayment});
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -125,7 +120,6 @@ public class LineService {
     }
 
     private String generateRandomString(int length) {
-        SecureRandom random = new SecureRandom();
         return UUID.randomUUID().toString().replace("-", "").substring(0, length);
     }
 }

@@ -64,27 +64,29 @@ const submitForm = async () => {
     formData.append('address', address)
     formData.append('zipCode', zipCode)
     formData.append('cardImg', imageStore.cardImg)
+    formData.append('paymentImg', imageStore.paymentImg)
 
-    const response = await toast.promise(
-      axios.post(`${url}/broadcast`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+    const response = await toast
+      .promise(
+        axios.post(`${url}/broadcast`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }),
+        {
+          pending: 'ระบบกำลังนำส่งข้อมูลของคุณ',
+          success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเรา👏',
+          error: 'เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง'
+        },
+        {
+          toastStyle: {
+            fontFamily: 'kanit',
+            color: '#070F2B'
+          }
         }
-      }),
-      {
-        pending: 'ระบบกำลังนำส่งข้อมูลของคุณ',
-        success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเรา👏',
-        error: 'เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง'
-      },
-      {
-        toastStyle: {
-          fontFamily: 'kanit',
-          color: '#070F2B'
-        }
-      }
-    )
-    console.log(response)
-    // setTimeout(() => router.push({ name: 'register' }), 5000)
+      )
+      .catch(() => setTimeout(() => router.push({ name: 'register' }), 5000))
+
     if (response.status === 200) {
       localStorage.clear()
       imageStore.clearAll()

@@ -23,7 +23,6 @@ onMounted(async () => {
     dataForm.value?.zipCode &&
     dataForm.value?.id
 
-  console.log(!checkData())
   if (!haveImge || !checkData()) router.push({ name: 'register' })
 })
 </script>
