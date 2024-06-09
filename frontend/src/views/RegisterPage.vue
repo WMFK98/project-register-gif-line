@@ -65,7 +65,7 @@ onMounted(async () => {
   await axios
     .get(`${url}/test`)
     .then((res) => {
-      if (res.status === 200) isServerRun.value === true
+      if (res.status === 200) isServerRun.value = true
       else
         toast('ระบบยังไม่พร้อมใช้งานในขณะนี้ โปรดสมัครผ่านช่องทาง line', {
           theme: 'auto',
