@@ -113,7 +113,11 @@ const $v = useVuelidate(rules, payment.value)
 
         <InputFile title="รูปหลักฐานการโอน" :img-stored="paymentImg" :errors="$v.img.$errors" />
         <div class="flex justify-center items-center h-[350px]">
-          <img class="max-w-[90%]" :src="imageStore.paymentPreview || exPayment" alt="" />
+          <img
+            class="max-w-[100%] max-h-[100%]"
+            :src="imageStore.paymentPreview || exPayment"
+            alt=""
+          />
         </div>
       </div>
 
