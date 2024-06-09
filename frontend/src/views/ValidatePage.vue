@@ -30,7 +30,7 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col pt-4 items-center text-primary-100">
     <div class="flex flex-col h-auto gap-2 justify-between">
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 w-screen px-3 sm:w-max">
         <h1 class="text-lg">โปรดตรวจสอบข้อมูลของท่าน</h1>
         <hr />
         <div class="flex flex-col gap-2">

@@ -129,7 +129,6 @@ public class LineService {
                 System.out.println("Failed to send broadcast, status code: " + response.getStatusCode());
                 removeFile(cardImgName);
                 removeFile(paymentImgName);
-
             }
         }  catch (RestClientException ex) {
             removeFile(cardImgName);
