@@ -144,13 +144,14 @@ const submitForm = async () => {
         ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครบัตรวีไอพีรับส่วนลด สมัครตัวแทนสอนขายออนไลน์ฟรี
       </h1>
       <div class="flex font-light flex-col gap-3">
-        <p>สิทธิพิเศษ</p>
+        <p>สิทธิพิเศษ <span class="text-red-500 font-bold bold text-sm">แคตตาล็อกฟรี!!</span></p>
         <div class="flex flex-col w-full gap-2 text-white">
           <BoxText text="ส่วนลด 25%" />
           <BoxText text="เงินปันผลทุกเดือน" />
           <BoxText text="ท่องเที่ยวต่างประเทศ" />
           <BoxText text="โบนัส 60,000 ฿ สิ้นปี" />
         </div>
+
         <p class="text-md font-normal">
           เพียง 180฿ <br />
           ตลอดชีพ!!
