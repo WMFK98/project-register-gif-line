@@ -22,8 +22,8 @@ const nameImage = computed(() =>
 
 const selectImg = async (e) => {
   const file = await e.target.files[0]
-  if (props.imgStored === imageStore.cardImg) setCardImg(file)
-  else setPaymentImg(file)
+  if (props.imgStored === imageStore.paymentImg) setPaymentImg(file)
+  else setCardImg(file)
 }
 </script>
 <template>

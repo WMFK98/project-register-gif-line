@@ -4,9 +4,8 @@ import NawaImg from './../components/images/NawaphanImg.vue'
 import EllipseBackground from './../components/images/EllipseBackground.vue'
 import BoxText from './../components/BoxText.vue'
 import InputText from './../components/InputText.vue'
-import InputFile from './../components/InputFile.vue'
+
 import BtnForm from './../components/BtnForm.vue'
-import exIdCard from '/images/ex-id-card.jpg'
 import { checkBlobURL } from './../libs/previewBinary'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, helpers, numeric } from '@vuelidate/validators'
@@ -14,17 +13,12 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { useImageStore } from '@/store/imageStore'
-import { storeToRefs } from 'pinia'
 import axios from 'axios'
+const isAccept = ref(false)
 const imageStore = useImageStore()
 const isServerRun = ref(false)
-const { cardImg } = storeToRefs(imageStore)
 const router = useRouter()
 const url = import.meta.env.VITE_URL_API
-const checkTypeFile = () => {
-  const type = cardImg.value.type
-  return type.includes('jpg') || type.includes('png') || type.includes('jpeg')
-}
 const rules = computed(() => {
   return {
     prefix: { required: helpers.withMessage('โปรดระบุ', required) },
@@ -45,9 +39,6 @@ const rules = computed(() => {
       required: helpers.withMessage('กรุณากรอกรหัสไปรษณีย์', required),
       numeric: helpers.withMessage('กรุณากรอกเป็นตัวเลขเท่านั้น', numeric),
       minLength: helpers.withMessage('กรุณากรอกรหัสไปรษณีย์ 5 ตัว', minLength(5))
-    },
-    idCard: {
-      checkTypeFile: helpers.withMessage('กรุณาใส่รูปภาพ สกุล (*.jpg,*.png,.*.jpeg)', checkTypeFile)
     }
   }
 })
@@ -110,8 +101,18 @@ watch(
 
 const submitForm = async () => {
   const result = await $v.value.$validate()
-  if (result) router.push({ name: 'validate' })
-  else
+
+  if (result && isAccept.value) return router.push({ name: 'payment' })
+  if (!isAccept.value)
+    toast('โปรดยินยอมแบบสอบถามนี้ ก่อนไปหน้าต่อไป', {
+      theme: 'auto',
+      type: 'error',
+      toastStyle: {
+        fontFamily: 'kanit',
+        color: '#070F2B'
+      }
+    })
+  if (!result)
     toast('เกิดข้อผิดพลาด โปรดตรวจสอบข้อมูลของท่าน', {
       theme: 'auto',
       type: 'error',
@@ -139,7 +140,9 @@ const submitForm = async () => {
   </div>
   <div id="hero" class="flex">
     <div id="intorduce" class="pl-[2%] min-h-[380px] w-1/2 text-primary-200 gap-2 flex flex-col">
-      <h1 class="text-lg">ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครตัวแทน Giffarine</h1>
+      <h1 class="text-lg">
+        ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครบัตรวีไอพีรับส่วนลด สมัครตัวแทนสอนขายออนไลน์ฟรี
+      </h1>
       <div class="flex font-light flex-col gap-3">
         <p>สิทธิพิเศษ</p>
         <div class="flex flex-col w-full gap-2 text-white">
@@ -254,26 +257,41 @@ const submitForm = async () => {
         max-length="5"
         :errors="$v.zipCode.$errors"
       />
-      <InputFile
-        title="อัพโหลดรูปภาพบัตรประชาชน"
-        :img-stored="cardImg"
-        :errors="$v.idCard.$errors"
-      />
 
-      <div class="h-[350px] flex justify-center items-center">
-        <img
-          class="h-[90%]"
-          :src="imageStore.cardImgPreview || exIdCard"
-          :alt="cardImg?.name || 'test'"
-        />
+      <div class="flex gap-2 items-center">
+        <input type="checkbox" v-model="isAccept" class="checkbox checkbox-sm border-gray-400" />
+        <p>
+          ข้าพเจ้ายอมรับเงื่อนไขของ
+          <span onclick="pdpa.showModal()" class="text-blue-700 link">นโยบายขอข้อมูล</span>
+        </p>
       </div>
       <p v-show="!isServerRun" class="text-red-500 text-center">
         ระบบยังไม่พร้อมใช้งานในขณะนี้ ขออภัยในความไม่สะดวก
-        <a class="text-blue-700 cursor-pointer link" href="https://lin.ee/mXAFYKj"
+        <a target="_blank" class="text-blue-700 cursor-pointer link" href="https://lin.ee/mXAFYKj"
           >โปรดสมัครผ่านช่องทาง line</a
         >
       </p>
       <BtnForm :is-disabled="!isServerRun" @click="submitForm" text="สมัครสมาชิก" />
     </div>
+    <dialog id="pdpa" class="modal">
+      <div class="modal-box text-primary-100 bg-white font-kanit max-w-5xl">
+        <h3 class="text-lg">นโยบายขอข้อมูล</h3>
+        <p class="py-4">
+          แบบฟอร์มนี้จัดทำเพื่อสำหรับใช้ในการสมัครกิฟฟารีนเท่านั้น
+          โดยจะไม่นำข้อมูลนี้ไปเผยแพร่ให้กับผู้ใดหรือนำไปทำทุรกรรมอื่นโดยข้อมูล
+          รูปภาพบัตรประชาชนของท่านจะถูกลบออกภายในหนึ่งสัปดาห์หลังจากมีการส่งมาเพื่อความปลอดภัยกับข้อมูลของท่าน
+          หากมีข้อสงสัย
+          <a
+            class="text-blue-700 cursor-pointer link"
+            target="_blank"
+            href="https://lin.ee/mXAFYKj "
+            >โปรดติดต่อสอบถามผ่าน line</a
+          >
+        </p>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
   </div>
 </template>

@@ -8,16 +8,13 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { useRouter } from 'vue-router'
 import { checkBlobURL } from './../libs/previewBinary'
-import { toast } from 'vue3-toastify'
 
-import axios from 'axios'
 import { useImageStore } from '@/store/imageStore'
 import { storeToRefs } from 'pinia'
-const url = import.meta.env.VITE_URL_API
-const isLoading = ref(false)
+
 const dataForm = ref()
 const imageStore = useImageStore()
-const { paymentImg, cardImg } = storeToRefs(imageStore)
+const { paymentImg } = storeToRefs(imageStore)
 
 const checkData = () =>
   dataForm.value?.prefix &&
@@ -29,15 +26,10 @@ const checkData = () =>
   dataForm.value?.id
 
 onMounted(async () => {
-  const urlImage = await imageStore.cardImgPreview
-  if (!urlImage) router.push({ name: 'register' })
   dataForm.value = await JSON.parse(localStorage.getItem('dataForm'))
   const haveImge = await checkBlobURL(dataForm.value?.idCard?.preview)
-
-  if (!haveImge || !checkData()) router.push({ name: 'register', hash: '#error' })
+  if (!haveImge || !checkData()) router.push({ name: 'register' })
 })
-
-const payment = ref({ img: null })
 const router = useRouter()
 const checkTypeFile = () => {
   const type = paymentImg.value.type
@@ -51,51 +43,12 @@ const rules = computed(() => {
   }
 })
 
-const submitForm = async () => {
+const submitPayment = async () => {
   const result = await $v.value.$validate()
-  if (result && checkData()) {
-    const { id, name, prefix, birthDate, zipCode, phone, address } = await dataForm.value
-    const formData = new FormData()
-    formData.append('id', id)
-    formData.append('name', name)
-    formData.append('prefix', prefix)
-    formData.append('birthDate', birthDate)
-    formData.append('phone', phone)
-    formData.append('address', address)
-    formData.append('zipCode', zipCode)
-    formData.append('cardImg', cardImg.value)
-    formData.append('paymentImg', paymentImg.value)
-    const response = await toast
-      .promise(
-        axios.post(`${url}/broadcast`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }),
-        {
-          pending: 'ระบบกำลังนำส่งข้อมูลของคุณ',
-          success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเรา👏',
-          error: 'เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง'
-        },
-        {
-          toastStyle: {
-            fontFamily: 'kanit',
-            color: '#070F2B'
-          }
-        }
-      )
-      .catch(() => setTimeout(() => router.push({ name: 'register' }), 5000))
-
-    if (response.status === 200) {
-      localStorage.clear()
-      imageStore.clearAll()
-      isLoading.value = false
-      router.push({ name: 'register' })
-    }
-  }
+  if (result) router.push({ name: 'validate' })
 }
 
-const $v = useVuelidate(rules, payment.value)
+const $v = useVuelidate(rules, paymentImg.value)
 </script>
 
 <template>
@@ -121,12 +74,11 @@ const $v = useVuelidate(rules, payment.value)
         </div>
       </div>
 
-      <div class="flex gap-3">
-        <BtnForm :is-disabled="isLoading" text="ยืนยัน" @click="submitForm" /><BtnForm
-          @click="$router.back()"
-          :is-disabled="isLoading"
+      <div class="flex w-full justify-around">
+        <BtnForm text="ต่อไป" @click="submitPayment" /><BtnForm
+          @click="$router.push({ name: 'register' })"
           class="text-sm"
-          text="ย้อนกลับ"
+          text="แก้ไข"
         />
       </div>
     </div>
