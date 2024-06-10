@@ -41,9 +41,9 @@ const rules = computed(() => {
 })
 const $v = useVuelidate(rules, cardImg.value)
 const submitForm = async () => {
-  isLoading.value = true
   const result = await $v.value.$validate()
   if (result && checkData()) {
+    isLoading.value = true
     const { id, name, prefix, birthDate, zipCode, phone, address } = await dataForm.value
     const formData = new FormData()
     formData.append('id', id)
@@ -64,8 +64,8 @@ const submitForm = async () => {
         }),
         {
           pending: 'ระบบกำลังนำส่งข้อมูลของคุณ',
-          success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเรา👏',
-          error: 'เกิดข้อผิดพลาด โปรดลองอีกครั้งในภายหลัง'
+          success: 'ขอบคุณที่ร่วมเป็นส่วนหนึ่งกับทางเราสามารถสอบถามเพิ่มเติมได้ผ่านทาง LINE นะคะ👏',
+          error: 'ขออภัยในความไม่สะดวกโปรดลองอีกครั้งในภายหลังหรือสมัครผ่านช่องทาง LINE แทนนะคะ👏'
         },
         {
           toastStyle: {
@@ -75,6 +75,14 @@ const submitForm = async () => {
         }
       )
       .catch(() => {
+        toast('ขออภัยในความไม่สะดวกโปรดลองอีกครั้งในภายหลังหรือสมัครผ่านช่องทาง LINE แทนนะคะ👏', {
+          theme: 'auto',
+          type: 'error',
+          toastStyle: {
+            fontFamily: 'kanit',
+            color: '#070F2B'
+          }
+        })
         setTimeout(() => router.push({ name: 'register' }), 5000)
       })
     if (response.status === 200) {
@@ -82,7 +90,15 @@ const submitForm = async () => {
       imageStore.clearAll()
       router.push({ name: 'register' })
     }
-  }
+  } else
+    toast('เกิดข้อผิดพลาด โปรดตรวจสอบข้อมูลหรือรูปภาพของท่าน', {
+      theme: 'auto',
+      type: 'error',
+      toastStyle: {
+        fontFamily: 'kanit',
+        color: '#070F2B'
+      }
+    })
 }
 
 onMounted(async () => {

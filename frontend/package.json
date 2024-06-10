@@ -16,6 +16,7 @@
     "axios": "^1.6.8",
     "flowbite-datepicker": "^1.2.6",
     "pinia": "^2.1.7",
+    "tailwindcss-animated": "^1.1.0",
     "vue": "^3.4.21",
     "vue-axios": "^3.5.2",
     "vue-router": "^4.3.0",

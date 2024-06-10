@@ -8,7 +8,7 @@
       <RouterView />
       <a
         href="https://lin.ee/mXAFYKj"
-        class="fixed w-[50px] rounded-full overflow-hidden lg:w-[60px] bottom-3 right-8"
+        class="fixed w-[50px] rounded-full animate-bounce animate-infinite animate-duration-[4000ms] animate-ease-out overflow-hidden lg:w-[60px] bottom-3 right-8"
         target="_blank"
       >
         <img class="" src="/images/line-icon.webp" alt="line-icon" />

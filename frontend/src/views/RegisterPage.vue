@@ -9,11 +9,42 @@ import BtnForm from './../components/BtnForm.vue'
 import { checkBlobURL } from './../libs/previewBinary'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, helpers, numeric } from '@vuelidate/validators'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { useImageStore } from '@/store/imageStore'
 import axios from 'axios'
+
+const typeAnimate = reactive({
+  typeValue: '',
+  typeStatus: false,
+  displayTextArray: [
+    'ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครบัตร VIP รับส่วนลด สมัครตัวแทนสอนขายออนไลน์ฟรี'
+  ],
+  typingSpeed: 50,
+  erasingSpeed: 100,
+  newTextDelay: 1000,
+  displayTextArrayIndex: 0,
+  charIndex: 0
+})
+
+const typeText = () => {
+  if (
+    typeAnimate.charIndex < typeAnimate.displayTextArray[typeAnimate.displayTextArrayIndex].length
+  ) {
+    if (!typeAnimate.typeStatus) typeAnimate.typeStatus = true
+    typeAnimate.typeValue += typeAnimate.displayTextArray[typeAnimate.displayTextArrayIndex].charAt(
+      typeAnimate.charIndex
+    )
+    typeAnimate.charIndex += 1
+    setTimeout(typeText, typeAnimate.typingSpeed)
+  } else {
+    typeAnimate.typeStatus = false
+  }
+}
+
+setTimeout(typeText, typeAnimate.newTextDelay)
+
 const isAccept = ref(false)
 const imageStore = useImageStore()
 const isServerRun = ref(false)
@@ -141,33 +172,50 @@ const submitForm = async () => {
   <div id="hero" class="flex">
     <div id="intorduce" class="pl-[2%] min-h-[380px] w-1/2 text-primary-200 gap-2 flex flex-col">
       <h1 class="text-lg">
-        ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครบัตร VIP รับส่วนลด สมัครตัวแทนสอนขายออนไลน์ฟรี
+        <span class="typed-text">{{ typeAnimate.typeValue }}</span>
+        <span class="blinking-cursor">|</span>
+        <span class="cursor" :class="{ typing: typeStatus }">&nbsp;</span>
       </h1>
       <div class="flex font-light flex-col gap-3">
         <p>สิทธิพิเศษ <span class="text-red-500 font-bold bold text-sm">แคตตาล็อกฟรี!!</span></p>
         <div class="flex flex-col w-full gap-2 text-white">
-          <BoxText text="ส่วนลด 25%" />
-          <BoxText text="เงินปันผลทุกเดือน" />
-          <BoxText text="ท่องเที่ยวต่างประเทศ" />
-          <BoxText text="โบนัส 60,000 ฿ สิ้นปี" />
+          <BoxText
+            class="animate-fade-right animate-once animate-duration-1000 animate-ease-out"
+            text="ส่วนลด 25%"
+          />
+          <BoxText
+            class="animate-fade-right animate-once animate-duration-1000 animate-ease-out"
+            text="เงินปันผลทุกเดือน"
+          />
+          <BoxText
+            class="animate-fade-right animate-once animate-duration-1000 animate-ease-out"
+            text="ท่องเที่ยวต่างประเทศ"
+          />
+          <BoxText
+            class="animate-fade-right animate-once animate-duration-1000 animate-ease-out"
+            text="โบนัส 60,000 ฿ สิ้นปี"
+          />
         </div>
-
         <p class="text-md font-normal">
-          เพียง 180฿ <br />
+          เพียง 180฿<br />
           ตลอดชีพ!!
         </p>
       </div>
     </div>
     <div></div>
     <div id="main-image" class="w-1/2 relative">
-      <EllipseBackground class="absolute bottom-0 right-0" />
+      <EllipseBackground
+        class="absolute animate-fade animate-once animate-duration-1000 animate-ease-in-out bottom-0 right-0"
+      />
       <div class="bottom-[0%] rounded-bl-[45%] w-max overflow-hidden absolute right-0">
-        <NawaImg />
+        <NawaImg class="animate-fade-left animate-once animate-duration-1000 animate-ease-in-out" />
       </div>
     </div>
   </div>
-  <div id="register" class="flex flex-col p-[2%] font-light">
-    <div class="flex text-sm items-center gap-4 text-primary-100">
+  <div id="register" class="flex flex-col p-[2%]">
+    <div
+      class="flex text-sm items-center gap-4 text-primary-100 animate-flip-up animate-once animate-duration-1000 animate-ease-in-out"
+    >
       <hr class="flex-1 border-primary-100" />
       <p id="form" class="flex-3">สมัครสมาชิก</p>
       <hr class="flex-1 border-primary-100" />
@@ -175,7 +223,9 @@ const submitForm = async () => {
 
     <div class="flex flex-col gap-2 text-primary-100">
       <div class="flex gap-1">
-        <label class="flex flex-col w-[25%]">
+        <label
+          class="flex flex-col w-[25%] animate-fade-up animate-once animate-duration-1000 animate-ease-in-out"
+        >
           <p>คำนำหน้า <span class="text-red-400">*</span></p>
           <select
             v-model="registerForm.prefix"
@@ -199,7 +249,7 @@ const submitForm = async () => {
         </label>
 
         <InputText
-          class="flex-auto"
+          class="flex-auto animate-fade-up animate-once animate-duration-1000 animate-ease-in-out"
           v-model="registerForm.name"
           title="ชื่อ-นามสกุล"
           placeholder="สมศรี แสนสุขดี"
@@ -210,14 +260,14 @@ const submitForm = async () => {
       <div id="date-phone" class="flex gap-2 w-full text-primary-100">
         <InputText
           v-model="registerForm.birthDate"
-          class="flex-1"
+          class="flex-1 animate-fade-up animate-once animate-duration-1000 animate-delay-500 animate-ease-in-out"
           title="วันเกิด (ปี พ.ศ.)"
           type="date"
           :errors="$v.birthDate.$errors"
         />
         <InputText
           v-model="registerForm.phone"
-          class="flex-1"
+          class="flex-1 animate-fade-up animate-once animate-duration-1000 animate-delay-500 animate-ease-in-out"
           title="เบอร์โทร"
           placeholder="082xxxxxxx"
           max-length="10"
@@ -225,6 +275,7 @@ const submitForm = async () => {
         />
       </div>
       <InputText
+        class="animate-fade-up animate-once animate-duration-1000 animate-delay-1000 animate-ease-in-out"
         v-model="registerForm.id"
         title="เลขบัตรประชาชน"
         placeholder="111184xxxxxxx"
@@ -232,7 +283,9 @@ const submitForm = async () => {
         :errors="$v.id.$errors"
       />
 
-      <label class="w-full">
+      <label
+        class="w-full animate-fade-up animate-once animate-duration-1000 animate-delay-[1500ms] animate-ease-in-out"
+      >
         <p>ที่อยู่ปัจจุบัน (จะมีการจัดส่งเอกสารให้) <span class="text-red-400">*</span></p>
         <textarea
           v-model="registerForm.address"
@@ -251,7 +304,7 @@ const submitForm = async () => {
       </label>
 
       <InputText
-        class=""
+        class="animate-fade-up animate-once animate-duration-1000 animate-delay-[2000ms] animate-ease-in-out"
         v-model="registerForm.zipCode"
         title="รหัสไปรษณีย์"
         placeholder="xxxxx"
@@ -259,7 +312,9 @@ const submitForm = async () => {
         :errors="$v.zipCode.$errors"
       />
 
-      <div class="flex gap-2 items-center">
+      <div
+        class="flex gap-2 items-center animate-fade-up animate-once animate-duration-1000 animate-delay-[2500ms] animate-ease-in-out"
+      >
         <input type="checkbox" v-model="isAccept" class="checkbox checkbox-sm border-gray-400" />
         <p>
           ข้าพเจ้ายอมรับเงื่อนไขของ
@@ -296,3 +351,59 @@ const submitForm = async () => {
     </dialog>
   </div>
 </template>
+
+<style>
+.blinking-cursor {
+  color: #2c3e50;
+  -webkit-animation: 1s blink step-end infinite;
+  -moz-animation: 1s blink step-end infinite;
+  -ms-animation: 1s blink step-end infinite;
+  -o-animation: 1s blink step-end infinite;
+  animation: 1s blink step-end infinite;
+}
+@keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #2c3e50;
+  }
+}
+@-moz-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #2c3e50;
+  }
+}
+@-webkit-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #2c3e50;
+  }
+}
+@-ms-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #2c3e50;
+  }
+}
+@-o-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #2c3e50;
+  }
+}
+</style>

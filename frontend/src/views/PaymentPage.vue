@@ -8,7 +8,7 @@ import { useVuelidate } from '@vuelidate/core'
 import { helpers } from '@vuelidate/validators'
 import { useRouter } from 'vue-router'
 import { checkBlobURL } from './../libs/previewBinary'
-
+import { toast } from 'vue3-toastify'
 import { useImageStore } from '@/store/imageStore'
 import { storeToRefs } from 'pinia'
 
@@ -46,6 +46,15 @@ const rules = computed(() => {
 const submitPayment = async () => {
   const result = await $v.value.$validate()
   if (result) router.push({ name: 'validate' })
+  else
+    toast('เกิดข้อผิดพลาด โปรดตรวจสอบข้อมูลหรือรูปภาพของท่าน', {
+      theme: 'auto',
+      type: 'error',
+      toastStyle: {
+        fontFamily: 'kanit',
+        color: '#070F2B'
+      }
+    })
 }
 
 const $v = useVuelidate(rules, paymentImg.value)
