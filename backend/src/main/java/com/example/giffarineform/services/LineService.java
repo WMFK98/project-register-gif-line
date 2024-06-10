@@ -1,4 +1,5 @@
 package com.example.giffarineform.services;
+import com.example.giffarineform.exceptions.InvalidFieldInputException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -72,7 +73,7 @@ public class LineService {
     }
 
     private String storeRandomFileName(MultipartFile file){
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String randomFileName = "";
         try {
             if (fileName.contains("..")) {
@@ -93,6 +94,8 @@ public class LineService {
     }
 
     public DataForm sendBroadcast(DataForm dataForm) {
+        if(dataForm.getCardImg().isEmpty()) throw new InvalidFieldInputException("cardImg","is must not be null");
+        if(dataForm.getCardImg().isEmpty()) throw new InvalidFieldInputException("paymentImg","is must not be null");
         String cardImgName = storeRandomFileName(dataForm.getCardImg());
         String paymentImgName = storeRandomFileName(dataForm.getPaymentImg());
         Map<String, Object> messageText = new HashMap<>();
