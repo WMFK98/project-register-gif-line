@@ -263,7 +263,7 @@ const submitForm = async () => {
         <input type="checkbox" v-model="isAccept" class="checkbox checkbox-sm border-gray-400" />
         <p>
           ข้าพเจ้ายอมรับเงื่อนไขของ
-          <span onclick="pdpa.showModal()" class="text-blue-700 link">นโยบายขอข้อมูล</span>
+          <span onclick="pdpa.showModal()" class="text-blue-700 link">นโยบายการขอข้อมูล</span>
         </p>
       </div>
       <p v-show="!isServerRun" class="text-red-500 text-center">
@@ -276,7 +276,7 @@ const submitForm = async () => {
     </div>
     <dialog id="pdpa" class="modal">
       <div class="modal-box text-primary-100 bg-white font-kanit max-w-5xl">
-        <h3 class="text-lg">นโยบายขอข้อมูล</h3>
+        <h3 class="text-lg">นโยบายการขอข้อมูล</h3>
         <p class="py-4">
           แบบฟอร์มนี้จัดทำเพื่อสำหรับใช้ในการสมัครกิฟฟารีนเท่านั้น
           โดยจะไม่นำข้อมูลนี้ไปเผยแพร่ให้กับผู้ใดหรือนำไปทำธุรกรรมอื่นโดยข้อมูล
