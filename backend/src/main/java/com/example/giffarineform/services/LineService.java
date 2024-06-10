@@ -100,7 +100,7 @@ public class LineService {
         String paymentImgName = storeRandomFileName(dataForm.getPaymentImg());
         Map<String, Object> messageText = new HashMap<>();
         messageText.put("type", "text");
-        messageText.put("text", String.format("ชื่อ %s %s\nวันเกิด %s เบอโทร %s\nที่อยู่ %s รหัสไปรษณีย์ %s\nบัตรประชาชน %s",
+        messageText.put("text", String.format("ชื่อ %s %s\nวันเกิด %s\nเบอโทร %s\nที่อยู่ %s\nรหัสไปรษณีย์ %s\nบัตรประชาชน %s",
                 dataForm.getPrefix(), dataForm.getName(), dataForm.getBirthDate(),
                 dataForm.getPhone(), dataForm.getAddress(), dataForm.getZipCode(), dataForm.getId()));
 
