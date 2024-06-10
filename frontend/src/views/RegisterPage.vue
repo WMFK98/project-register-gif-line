@@ -141,7 +141,7 @@ const submitForm = async () => {
   <div id="hero" class="flex">
     <div id="intorduce" class="pl-[2%] min-h-[380px] w-1/2 text-primary-200 gap-2 flex flex-col">
       <h1 class="text-lg">
-        ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครบัตรวีไอพีรับส่วนลด สมัครตัวแทนสอนขายออนไลน์ฟรี
+        ยินดีต้อนรับสู่ การสมัครสมาชิก สมัครบัตร VIP รับส่วนลด สมัครตัวแทนสอนขายออนไลน์ฟรี
       </h1>
       <div class="flex font-light flex-col gap-3">
         <p>สิทธิพิเศษ <span class="text-red-500 font-bold bold text-sm">แคตตาล็อกฟรี!!</span></p>
