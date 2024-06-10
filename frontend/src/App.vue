@@ -3,7 +3,7 @@
 <template>
   <div class="w-screen min-h-screen max-h-max bg-white lg:bg-slate-500 py-0 lg:py-8">
     <div
-      class="bg-white md:w-[580px] relative overflow-x-hidden rounded-none mx-auto md:rounded-lg overflow-hidden flex flex-col gap-3 font-kanit pb-1"
+      class="bg-white lg:w-[580px] relative overflow-x-hidden rounded-none mx-auto lg:rounded-lg overflow-hidden flex flex-col gap-3 font-kanit pb-1"
     >
       <RouterView />
       <a
