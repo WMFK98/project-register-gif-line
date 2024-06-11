@@ -54,7 +54,7 @@ const rules = computed(() => {
   return {
     prefix: { required: helpers.withMessage('โปรดระบุ', required) },
     name: { required: helpers.withMessage('กรุณากรอกชื่อ', required) },
-    birthDate: { required: helpers.withMessage('กรุณาวันเกิด', required) },
+    birthDate: { required: helpers.withMessage('กรุณากรอกวันเกิด', required) },
     phone: {
       required: helpers.withMessage('กรุณากรอกเบอร์โทร', required),
       numeric: helpers.withMessage('กรุณากรอกเป็นตัวเลขเท่านั้น', numeric),
@@ -174,7 +174,7 @@ const submitForm = async () => {
       <h1 class="text-lg">
         <span class="typed-text">{{ typeAnimate.typeValue }}</span>
         <span class="blinking-cursor">|</span>
-        <span class="cursor" :class="{ typing: typeStatus }">&nbsp;</span>
+        <span class="cursor">&nbsp;</span>
       </h1>
       <div class="flex font-light flex-col gap-3">
         <p>สิทธิพิเศษ <span class="text-red-500 font-bold bold text-sm">แคตตาล็อกฟรี!!</span></p>
@@ -254,6 +254,7 @@ const submitForm = async () => {
           title="ชื่อ-นามสกุล"
           placeholder="สมศรี แสนสุขดี"
           :errors="$v.name.$errors"
+          max-length="100"
         />
       </div>
 
@@ -267,6 +268,7 @@ const submitForm = async () => {
         />
         <InputText
           v-model="registerForm.phone"
+          type="tel"
           class="flex-1 animate-fade-up animate-once animate-duration-1000 animate-delay-500 animate-ease-in-out"
           title="เบอร์โทร"
           placeholder="082xxxxxxx"
@@ -278,21 +280,30 @@ const submitForm = async () => {
         class="animate-fade-up animate-once animate-duration-1000 animate-delay-1000 animate-ease-in-out"
         v-model="registerForm.id"
         title="เลขบัตรประชาชน"
+        type="tel"
         placeholder="111184xxxxxxx"
         max-length="13"
         :errors="$v.id.$errors"
       />
 
       <label
-        class="w-full animate-fade-up animate-once animate-duration-1000 animate-delay-[1500ms] animate-ease-in-out"
+        class="w-full relative animate-fade-up animate-once animate-duration-1000 animate-delay-[1500ms] animate-ease-in-out"
       >
+        <p
+          :class="registerForm.address.length >= 300 && 'text-red-600'"
+          class="absolute z-40 top-[33px] right-[10px] text-gray-400 text-[12px]"
+        >
+          {{ registerForm.address.length }}/300
+        </p>
         <p>ที่อยู่ปัจจุบัน (จะมีการจัดส่งเอกสารให้) <span class="text-red-400">*</span></p>
         <textarea
+          maxlength="300"
           v-model="registerForm.address"
           :errors="$v.address.$errors"
-          class="textare bg-white border-[1px] border-gray-200 rounded-lg p-1 w-full"
+          class="textare bg-white relative border-[1px] pr-[60px] border-gray-200 rounded-lg p-1 w-full"
           placeholder="จังหวัด อำเภอ ตำบล หมู่ ถนน บ้านเลขที่"
-        ></textarea>
+        >
+        </textarea>
         <div>
           <span
             v-for="error in $v.address.$errors"
