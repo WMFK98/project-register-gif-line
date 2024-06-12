@@ -24,7 +24,7 @@ defineProps({
     />
     <p
       v-show="maxLength"
-      class="absolute top-[57%] text-gray-400 right-[10px] text-[12px]"
+      class="absolute top-[31px] text-gray-400 right-[10px] text-[12px]"
       :class="modelValue.length >= maxLength && 'text-red-600'"
     >
       {{ modelValue.length }}/{{ maxLength }}
